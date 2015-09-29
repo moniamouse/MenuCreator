@@ -29,7 +29,7 @@ public class FoodComponentCollection_CSVLoader implements IMenuCreatorLoader{
     private FoodComponentsCollection targetObject;
     private final TreeMap<String, Integer> mapping;
     final TreeMap<String, Integer> headers;
-    private ArrayList<NutritionComponent> nutritionHeaders;
+    private NutritionCollection nutritionHeaders;
     private CSVReader reader;
     
     public FoodComponentCollection_CSVLoader() {
@@ -50,7 +50,7 @@ public class FoodComponentCollection_CSVLoader implements IMenuCreatorLoader{
         mapping.put("Name", 0);
         mapping.put("Code", 0);
         mapping.put("NutritionValues", 0);
-        nutritionHeaders = new ArrayList<>();
+        nutritionHeaders = new NutritionCollection();
     }
 
     @Override
@@ -109,11 +109,10 @@ public class FoodComponentCollection_CSVLoader implements IMenuCreatorLoader{
         if (o instanceof FoodComponentsCollection) {              
             targetObject = (FoodComponentsCollection) o;
             if(targetObject.getFoodList().size() > 0){ 
-                NutritionComponent[] nut1 = targetObject.getFoodList().get(0).getNutritionTable();
-                nutritionHeaders = (ArrayList<NutritionComponent>)Arrays.asList( nut1); 
+                nutritionHeaders = targetObject.getFoodList().get(0).getNutritionTable();
             }
             else
-                nutritionHeaders = new ArrayList<>();
+                nutritionHeaders = new NutritionCollection();
        }
        else
            throw new IllegalArgumentException("Argument should be of class FoodComponentCollection");
@@ -134,7 +133,7 @@ public class FoodComponentCollection_CSVLoader implements IMenuCreatorLoader{
         else
             file = new File(parameters.get("FilePath"));
         
-        if((!nutritionHeaders.isEmpty() && filledMappings() < nutritionHeaders.size() - 2) || headers.get("Name") == 0)  
+        if((filledMappings() < nutritionHeaders.size() - 2) || headers.get("Name") == 0)  
             throw new InvalidParameterException("There is no mapping for this CSV File, use getMapping");
             
         if(this.targetObject != null) {
@@ -182,9 +181,8 @@ public class FoodComponentCollection_CSVLoader implements IMenuCreatorLoader{
         
         String foodComponentName;
         String foodComponentCode;
-        NutritionComponent[] nutForCopy = new NutritionComponent[nutNumber];
-        nutForCopy = (NutritionComponent[]) nutritionHeaders.toArray(nutForCopy);
-        NutritionComponent[] nutr;
+        NutritionCollection nutForCopy = (NutritionCollection) nutritionHeaders.clone();
+        NutritionCollection nutr;
         float amount;
         FoodComponent foodComponent;
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
@@ -196,24 +194,21 @@ public class FoodComponentCollection_CSVLoader implements IMenuCreatorLoader{
                 foodComponentName = nextLine[mapping.get("Name") -1];
                 foodComponentCode = nextLine[mapping.get("Code") -1];
                 
-                int size = nutForCopy.length;
-                nutr = new NutritionComponent[size];
-                for(int i = 0; i<size; i++)
-                    nutr[i] = (NutritionComponent) nutForCopy[i].clone();
-                
+//                int size = nutForCopy.length;
+//                nutr = new NutritionComponent[size];
+//                for(int i = 0; i<size; i++)
+//                    nutr[i] = (NutritionComponent) nutForCopy[i].clone();
+                nutr = (NutritionCollection) nutForCopy.clone();
                 if(mapping.size() == 3){                    
                     for( int k = 0; k < nutNumber - nutrShift; k++){
                         amount = format.parse(nextLine[k + headerCount]).floatValue();
-                        //amount = Float.parseFloat(nextLine[k + headerCount]);
-                        // TODO: Decimal separator
-                        nutr[k].setAmount(amount);
+                        nutr.get(k).setAmount(amount);
                        }
-                    
                }
                 else
                 {
-                    for( NutritionComponent nut: nutr)
-                       nut.setAmount(Float.parseFloat(nextLine[mapping.get(nut.getName())]));
+                    final String[] nextLineA = nextLine;
+                    nutr.getNutritionList().forEach( a -> a.setAmount(Float.parseFloat(nextLineA[mapping.get(a.getName())])));
                 }
                 foodComponent = new FoodComponent(foodComponentName, foodComponentCode, nutr);
                 targetObject.addFoodComponent(foodComponent);
@@ -234,7 +229,7 @@ public class FoodComponentCollection_CSVLoader implements IMenuCreatorLoader{
         //ToDo: Return fields from classes, that columns from csv can be assigned to
         if(mapping.size() < nutritionHeaders.size() - 2)
         {
-            for(NutritionComponent nut: nutritionHeaders)
+            for(NutritionComponent nut: nutritionHeaders.getNutritionList())
                 if(mapping.containsKey(nut.getName()))  mapping.put(nut.getName(), 0);
         }
         return mapping;
@@ -247,7 +242,7 @@ public class FoodComponentCollection_CSVLoader implements IMenuCreatorLoader{
     }
         
     private boolean isNutritionExists(String nHeader, String type, String unit) {
-        return nutritionHeaders.stream().anyMatch((nut) -> (nut.getName().equals(nHeader) && nut.getType().equals(type) && nut.getUnit().equals(unit)));
+        return nutritionHeaders.getNutritionList().stream().anyMatch((nut) -> (nut.getName().equals(nHeader) && nut.getType().equals(type) && nut.getUnit().equals(unit)));
     }
     
 }

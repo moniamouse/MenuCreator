@@ -1,23 +1,23 @@
 package kotys.monika.menucreator.classes;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class Meal {
 
     private final ArrayList<MealComponent> menu;
-
-    private final ArrayList<NutritionComponent> nutritionList;
-
+    private final NutritionCollection nutritionList;
+    private ArrayList<String> prescription;
     private String name;
-
     private String type;
 
     public Meal() {
         menu = new ArrayList();
         type = "";
-        nutritionList = new ArrayList();
+        nutritionList = new NutritionCollection();
         prescription = new ArrayList<>();
     }
 
@@ -31,7 +31,7 @@ public class Meal {
         updateNutritionList();
     }
 
-    public ArrayList<NutritionComponent> getNutritionList() {
+    public NutritionCollection getNutritionList() {
         return nutritionList;
     }
 
@@ -65,42 +65,63 @@ public class Meal {
     }
 
     private void updateNutritionList() {
-        nutritionList.forEach( c->{
-    c.setAmount(0);
-});
-        menu.forEach( c->{
-    NutritionComponent[] nutrition = c.getNutrition();
-    int length = nutrition.length;
-    for (int i = 0; i < length; i++) {
-        if (!nutritionListContains(nutrition[i].getName())) {
-            try {
-                nutritionList.add((NutritionComponent) nutrition[i].clone());
-            } catch (CloneNotSupportedException ex) {
-                Logger.getLogger(Meal.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            NutritionComponent nutrToUpdate = nutritionListFound(nutrition[i].getName()).get(0);
-            float updatedAmount = nutrToUpdate.getAmount() + nutrition[i].getAmount();
-            nutrToUpdate.setAmount(updatedAmount);
-        }
+        // nie działa to tak jak ma, nutrition jest zerowy
+        
+        //final List<ArrayList<NutritionComponent>> nutr = menu.stream().map(mealComponent -> mealComponent.getNutrition().getNutritionList()).collect(Collectors.toList());
+        //Kopiowanie nowych nutritioncomponents, jesli produkty różnią się między sobą
+        final List<NutritionCollection> nutr = menu.stream()
+                .map(mealComponent -> mealComponent.getNutrition()).collect(Collectors.toList());
+        
+        nutr.forEach(nc -> {
+            nc.getNutritionList().forEach(n -> {
+                    if(nutritionList.findByNameTypeUnit(n.getName(), n.getType(), n.getUnit()).isEmpty())
+                        try {
+                            nutritionList.add((NutritionComponent) n.clone());
+                    } catch (CloneNotSupportedException ex) {
+                        Logger.getLogger(Meal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+        });
+        
+        nutritionList.getNutritionList().forEach( c->{c.setAmount(0);});
+        nutritionList.getNutritionList().forEach ( c -> 
+       {
+           c.setAmount(nutr.stream()
+                   .map(n -> n.findByNameTypeUnit(c.getName(), c.getType(), c.getUnit()).get(0).getAmount())
+                   .collect(Collectors.summingDouble(d -> d.doubleValue())).floatValue());
+                   
+       });
+       
     }
-});
-    }
-
-    private ArrayList<NutritionComponent> nutritionListFound(String name) {
-        ArrayList<NutritionComponent> founded = new ArrayList();
-        nutritionList.forEach( c->{
-    if (c.getName().equals(name))
-        founded.add(c);
-});
-        return founded;
-    }
-
-    private boolean nutritionListContains(String name) {
-        return !nutritionListFound(name).isEmpty();
-    }
-
-    private ArrayList<String> prescription;
+// int length = nutrition.size();
+//    for (int i = 0; i < length; i++) {
+//        if (!nutritionListContains(nutrition[i].getName())) {
+//            try {
+//                nutritionList.add((NutritionComponent) nutrition[i].clone());
+//            } catch (CloneNotSupportedException ex) {
+//                Logger.getLogger(Meal.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        } else {
+//            NutritionComponent nutrToUpdate = nutritionListFound(nutrition[i].getName()).get(0);
+//            float updatedAmount = nutrToUpdate.getAmount() + nutrition[i].getAmount();
+//            nutrToUpdate.setAmount(updatedAmount);
+//        }
+//    }
+//});
+//    }
+//
+//    private ArrayList<NutritionComponent> nutritionListFound(String name) {
+//        ArrayList<NutritionComponent> founded = new ArrayList();
+//        nutritionList.forEach( c->{
+//    if (c.getName().equals(name))
+//        founded.add(c);
+//});
+//        return founded;
+//    }
+//
+//    private boolean nutritionListContains(String name) {
+//        return !nutritionListFound(name).isEmpty();
+//    }
 
     public void setPrescritption(ArrayList<String> prescription) {
         this.prescription = prescription;

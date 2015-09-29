@@ -134,14 +134,14 @@ public class FoodComponentCollection_CSVLoaderTest {
         boolean result = instance.loadData();
         FoodComponentsCollection instanceResult = (FoodComponentsCollection) instance.getTargetObject();
         FoodComponent fc = instanceResult.findFoodComponent("Serwatka płynna");
-        List<NutritionComponent> founded = Arrays.asList(fc.getNutritionTable()).stream().filter(n -> n.getName().equals("tłuszcz")).collect(Collectors.toList());
-        Optional<Float> nutrValue = Arrays.asList(fc.getNutritionTable()).stream().filter(n -> n.getName().equals("tłuszcz")).map(n -> n.getAmount()).findFirst();
+        NutritionComponent founded = fc.getNutritionTable().findByName("tłuszcz").get(0);
+        Float nutrValue = founded.getAmount();
         assertEquals(expResult, result);
-        assertEquals(86, instanceResult.getFoodList().get(0).getNutritionTable().length); // ilosc zaladowanych nutr
+        assertEquals((Integer)86, instanceResult.getFoodList().get(0).getNutritionTable().size()); // ilosc zaladowanych nutr
         assertEquals(831, instanceResult.getFoodList().size()); // ilosc zaladowanych potraw
         
         //!!! źle załadowane wartości 
-        assertEquals(0.1, nutrValue.get(), 0.001); // losowo wybrany element bezpośrednio z pliku CSV
+        assertEquals(0.1, nutrValue, 0.001); // losowo wybrany element bezpośrednio z pliku CSV
     }
 
     /**

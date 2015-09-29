@@ -21,17 +21,17 @@ public class MealComponentTest {
     private final MealComponent instance;
     private final FoodComponent foodComponent;
     private final float amount;
-    private final NutritionComponent[] nutrition;
+    private final NutritionCollection nutrition;
     private final String name;
     private final String code;
 
     
-    public MealComponentTest() {
+    public MealComponentTest() throws NullPointerException, IllegalArgumentException, CloneNotSupportedException {
         
-        nutrition = new NutritionComponent[3];
-        nutrition[0] = new NutritionComponent("Carbo", "Carbo", "g", 80);
-        nutrition[1] = new NutritionComponent("Fat", "Fat", "g", 8);
-        nutrition[2] = new NutritionComponent("Protein", "Protein", "g", 4);
+        nutrition = new NutritionCollection();
+        nutrition.add(new NutritionComponent("Carbo", "Carbo", "g", 80));
+        nutrition.add(new NutritionComponent("Fat", "Fat", "g", 8));
+        nutrition.add(new NutritionComponent("Protein", "Protein", "g", 4));
         code = "12345";
         amount = 130;
         name = "Bread";
@@ -53,7 +53,7 @@ public class MealComponentTest {
     }
     
     @Before
-    public void setUp() {
+    public void setUp() throws IllegalArgumentException, NullPointerException, CloneNotSupportedException {
         foodComponent.setCode(code);
         foodComponent.setName(name);
         foodComponent.setNutritionTable(nutrition);
@@ -81,7 +81,7 @@ public class MealComponentTest {
      * Test of setFoodComponent method, of class MealComponent.
      */
     @Test
-    public void testSetFoodComponent() {
+    public void testSetFoodComponent() throws IllegalArgumentException, NullPointerException, CloneNotSupportedException {
         System.out.println("setFoodComponent");
         FoodComponent testFoodComponent = new FoodComponent("Bun", "12344", nutrition);
         instance.setFoodComponent(testFoodComponent);
@@ -104,7 +104,7 @@ public class MealComponentTest {
      * Test of setAmount method, of class MealComponent.
      */
     @Test
-    public void testSetAmount() {
+    public void testSetAmount() throws IllegalArgumentException, NullPointerException, CloneNotSupportedException {
         System.out.println("setAmount");
         float testAmount = 125F;
         instance.setAmount(testAmount);
@@ -128,7 +128,7 @@ public class MealComponentTest {
      * Test of setName method, of class MealComponent.
      */
     @Test
-    public void testSetName() {
+    public void testSetName() throws IllegalArgumentException, NullPointerException, CloneNotSupportedException {
         System.out.println("setName");
         String testName = "Bun";
         instance.setName(testName);
@@ -143,10 +143,10 @@ public class MealComponentTest {
     public void testGetNutrition() {
         System.out.println("getNutrition");
         Boolean result = true;
-        int length = nutrition.length;
+        int length = nutrition.size();
         for(int i =0; i< length; i++)
         {
-            if(instance.getNutrition()[i].getAmount() != nutrition[i].getAmount() * amount/100)
+            if(instance.getNutrition().get(i).getAmount() != nutrition.get(i).getAmount() * amount/100)
                 result = false;
         }
         assertTrue(result);

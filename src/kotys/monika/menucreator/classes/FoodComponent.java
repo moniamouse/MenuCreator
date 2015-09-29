@@ -2,17 +2,15 @@ package kotys.monika.menucreator.classes;
 
 public class FoodComponent {
 
-    public FoodComponent(String name, String code, NutritionComponent[] nutritionTable) {
+    private String name;
+    private String code;
+    private NutritionCollection nutritionTable;
+    
+    public FoodComponent(String name, String code, NutritionCollection nutritionTable) {
         this.name = name;
         this.code = code;
         this.nutritionTable = nutritionTable;
     }
-
-    private String name;
-
-    private String code;
-
-    private NutritionComponent nutritionTable[];
 
     public String getName() {
         return name;
@@ -30,14 +28,11 @@ public class FoodComponent {
         this.code = code;
     }
 
-    public FoodComponent() {
-    }
-
-    public NutritionComponent[] getNutritionTable() {
+    public NutritionCollection getNutritionTable() {
         return nutritionTable;
     }
 
-    public void setNutritionTable(NutritionComponent[] nutritionTable) {
+    public void setNutritionTable(NutritionCollection nutritionTable) {
         this.nutritionTable = nutritionTable;
     }
 }

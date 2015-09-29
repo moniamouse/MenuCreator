@@ -21,41 +21,41 @@ public class FoodComponentsCollectionTest {
 
     private final FoodComponent foodComponent1;
     private final FoodComponent foodComponent2;
-    private final NutritionComponent[] nutrition1;
-    private final NutritionComponent[] nutrition2;
+    private final NutritionCollection nutrition1;
+    private final NutritionCollection nutrition2;
 
     private final FoodComponent foodComponent11;
     private final FoodComponent foodComponent21;
-    private final NutritionComponent[] nutrition11;
-    private final NutritionComponent[] nutrition21;
+    private final NutritionCollection nutrition11;
+    private final NutritionCollection nutrition21;
     
     private final String name = "Breakfasts";
 
     
     public FoodComponentsCollectionTest() {
         
-        nutrition1 = new NutritionComponent[3];
-        nutrition1[0] = new NutritionComponent("Carbo", "Carbo", "g", 80);
-        nutrition1[1] = new NutritionComponent("Fat", "Fat", "g", 8);
-        nutrition1[2] = new NutritionComponent("Protein", "Protein", "g", 4);
+        nutrition1 = new NutritionCollection();
+        nutrition1.add(new NutritionComponent("Carbo", "Carbo", "g", 80));
+        nutrition1.add(new NutritionComponent("Fat", "Fat", "g", 8));
+        nutrition1.add(new NutritionComponent("Protein", "Protein", "g", 4));
         foodComponent1 = new FoodComponent("Bread", "12345", nutrition1);
         
-        nutrition2 = new NutritionComponent[3];
-        nutrition2[0] = new NutritionComponent("Carbo", "Carbo", "g", 10);
-        nutrition2[1] = new NutritionComponent("Fat", "Fat", "g", 18);
-        nutrition2[2] = new NutritionComponent("Protein", "Protein", "g", 34);
+        nutrition2 = new NutritionCollection();
+        nutrition2.add(new NutritionComponent("Carbo", "Carbo", "g", 10));
+        nutrition2.add(new NutritionComponent("Fat", "Fat", "g", 18));
+        nutrition2.add(new NutritionComponent("Protein", "Protein", "g", 34));
         foodComponent2 = new FoodComponent("Ham", "12344", nutrition2);
         
-        nutrition11 = new NutritionComponent[3];
-        nutrition11[0] = new NutritionComponent("Carbo", "Carbo", "g", 50);
-        nutrition11[1] = new NutritionComponent("Fat", "Fat", "g", 9);
-        nutrition11[2] = new NutritionComponent("Protein", "Protein", "g", 5);
+        nutrition11 = new NutritionCollection();
+        nutrition11.add(new NutritionComponent("Carbo", "Carbo", "g", 50));
+        nutrition11.add(new NutritionComponent("Fat", "Fat", "g", 9));
+        nutrition11.add(new NutritionComponent("Protein", "Protein", "g", 5));
         foodComponent11 = new FoodComponent("Oats", "12333", nutrition11);
         
-        nutrition21 = new NutritionComponent[3];
-        nutrition21[0] = new NutritionComponent("Carbo", "Carbo", "g", 15);
-        nutrition21[1] = new NutritionComponent("Fat", "Fat", "g", 56);
-        nutrition21[2] = new NutritionComponent("Protein", "Protein", "g", 44);
+        nutrition21 = new NutritionCollection();
+        nutrition21.add(new NutritionComponent("Carbo", "Carbo", "g", 15));
+        nutrition21.add(new NutritionComponent("Fat", "Fat", "g", 56));
+        nutrition21.add(new NutritionComponent("Protein", "Protein", "g", 44));
         foodComponent21 = new FoodComponent("Plum", "12324", nutrition21);
               
         instance = new FoodComponentsCollection(name);
@@ -78,7 +78,7 @@ public class FoodComponentsCollectionTest {
     public void testAddFoodComponent() {
                 
         System.out.println("addFoodComponent");
-        FoodComponent newFood = new FoodComponent("test", "1222", new NutritionComponent[0]);
+        FoodComponent newFood = new FoodComponent("test", "1222", new NutritionCollection());
         instance.addFoodComponent(newFood);
         assertEquals(newFood, instance.getFoodList().get(2));
         instance.removeFoodComponent(newFood);

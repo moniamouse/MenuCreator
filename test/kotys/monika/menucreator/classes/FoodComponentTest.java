@@ -21,13 +21,13 @@ public class FoodComponentTest {
     private final FoodComponent instance;
     private final String name = "Bread";
     private final String code = "1234";
-    private final NutritionComponent[] nutritionTable;
+    private final NutritionCollection nutritionTable;
     
     public FoodComponentTest() {
-        nutritionTable = new NutritionComponent[3];
-        nutritionTable[0] = new NutritionComponent("Carbo", "Carbo", "g", 80);
-        nutritionTable[1] = new NutritionComponent("Fat", "Fat", "g", 8);
-        nutritionTable[2] = new NutritionComponent("Protein", "Protein", "g", 4);
+        nutritionTable = new NutritionCollection();
+        nutritionTable.add(new NutritionComponent("Carbo", "Carbo", "g", 80));
+        nutritionTable.add(new NutritionComponent("Fat", "Fat", "g", 8));
+        nutritionTable.add(new NutritionComponent("Protein", "Protein", "g", 4));
         
         instance = new FoodComponent(name, code, nutritionTable);
     }
@@ -104,19 +104,19 @@ public class FoodComponentTest {
     @Test
     public void testGetNutritionTable() {
         System.out.println("getNutritionTable");
-        NutritionComponent[] expResult = nutritionTable;
-        NutritionComponent[] result = instance.getNutritionTable();
-        assertArrayEquals(expResult, result);
+        NutritionCollection expResult = nutritionTable;
+        NutritionCollection result = instance.getNutritionTable();
+        assertEquals(expResult, result);
     }
 
     /**
      * Test of setNutritionTable method, of class FoodComponent.
      */
     @Test
-    public void testSetNutritionTable() {
+    public void testSetNutritionTable() throws CloneNotSupportedException {
         System.out.println("setNutritionTable");
-        NutritionComponent[] testNutritionTable = nutritionTable.clone();
-        testNutritionTable[0].setAmount(120);
+        NutritionCollection testNutritionTable = (NutritionCollection) nutritionTable.clone();
+        testNutritionTable.get(0).setAmount(120);
         if(nutritionTable == testNutritionTable)
             fail();
         

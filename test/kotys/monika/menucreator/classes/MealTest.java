@@ -22,27 +22,27 @@ public class MealTest {
     private final MealComponent mealComponent2;
     private final FoodComponent foodComponent1;
     private final FoodComponent foodComponent2;
-    private final NutritionComponent[] nutrition;
-    private final NutritionComponent[] nutrition1;
-    private final NutritionComponent[] nutrition2;
+    private final NutritionCollection nutrition;
+    private final NutritionCollection nutrition1;
+    private final NutritionCollection nutrition2;
     private final String name;
     private final MealType mealType;
     private final String prescription2;
     private final ArrayList<String> prescription1;
     
-    public MealTest() {
-        nutrition1 = new NutritionComponent[3];
-        nutrition1[0] = new NutritionComponent("Carbo", "Carbo", "g", 80);
-        nutrition1[1] = new NutritionComponent("Fat", "Fat", "g", 8);
-        nutrition1[2] = new NutritionComponent("Protein", "Protein", "g", 4);
+    public MealTest() throws NullPointerException, CloneNotSupportedException {
+        nutrition1 = new NutritionCollection();
+        nutrition1.add(new NutritionComponent("Carbo", "Carbo", "g", 80));
+        nutrition1.add(new NutritionComponent("Fat", "Fat", "g", 8));
+        nutrition1.add(new NutritionComponent("Protein", "Protein", "g", 4));
         foodComponent1 = new FoodComponent("Bread", "12345", nutrition1);
         mealComponent1 = new MealComponent(foodComponent1);
         mealComponent1.setAmount(150);
         
-        nutrition2 = new NutritionComponent[3];
-        nutrition2[0] = new NutritionComponent("Carbo", "Carbo", "g", 10);
-        nutrition2[1] = new NutritionComponent("Fat", "Fat", "g", 18);
-        nutrition2[2] = new NutritionComponent("Protein", "Protein", "g", 34);
+        nutrition2 = new NutritionCollection();
+        nutrition2.add(new NutritionComponent("Carbo", "Carbo", "g", 10));
+        nutrition2.add(new NutritionComponent("Fat", "Fat", "g", 18));
+        nutrition2.add(new NutritionComponent("Protein", "Protein", "g", 34));
         foodComponent2 = new FoodComponent("Ham", "12344", nutrition2);
         mealComponent2 = new MealComponent(foodComponent2);
         mealComponent2.setAmount(30);
@@ -62,10 +62,10 @@ public class MealTest {
         mealType.defaultSetup();
         instance.setType(mealType.getMealType().get(1));
         
-        nutrition = new NutritionComponent[3];
-        nutrition[0] = new NutritionComponent("Carbo", "Carbo", "g", 80 * 1.5f + 10 * 0.3F);
-        nutrition[1] = new NutritionComponent("Fat", "Fat", "g", 8 * 1.5f + 18 * 0.3F);
-        nutrition[2] = new NutritionComponent("Protein", "Protein", "g", 4 * 1.5f + 34 * 0.3F);
+        nutrition = new NutritionCollection();
+        nutrition.add(new NutritionComponent("Carbo", "Carbo", "g", 80 * 1.5f + 10 * 0.3F));
+        nutrition.add(new NutritionComponent("Fat", "Fat", "g", 8 * 1.5f + 18 * 0.3F));
+        nutrition.add(new NutritionComponent("Protein", "Protein", "g", 4 * 1.5f + 34 * 0.3F));
         
     }
     
@@ -81,9 +81,9 @@ public class MealTest {
      * Test of addMealComponent method, of class Meal.
      */
     @Test
-    public void testAddMealComponent() {
+    public void testAddMealComponent() throws CloneNotSupportedException {
         System.out.println("addMealComponent");
-        MealComponent newMealComp = new MealComponent(new FoodComponent("butter", "1233", nutrition.clone()));
+        MealComponent newMealComp = new MealComponent(new FoodComponent("butter", "1233", (NutritionCollection) nutrition.clone()));
         instance.addMealComponent(newMealComp);
         assertTrue(instance.getComponentsList().size() == 3);
         instance.removeMealComponent(instance.getComponentsList().get(2));
@@ -106,9 +106,9 @@ public class MealTest {
     @Test
     public void testGetNutritionList() {
         System.out.println("getNutritionList");
-        ArrayList<NutritionComponent> result = instance.getNutritionList();
+        NutritionCollection result = instance.getNutritionList();
         assertTrue(result != null && result.size() == 3
-        && result.get(0).equals(nutrition[0]) && result.get(1).equals(nutrition[1]) && result.get(2).equals(nutrition[2]));
+        && result.get(0).equals(nutrition.get(0)) && result.get(1).equals(nutrition.get(1)) && result.get(2).equals(nutrition.get(2)));
     }
 
     /**
